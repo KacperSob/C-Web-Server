@@ -1,0 +1,1 @@
+1. Create error handling in server.c on every socket func called
