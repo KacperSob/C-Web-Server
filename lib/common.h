@@ -12,3 +12,4 @@
 #define IP "127.0.0.1"
 #define PORT 8080
 #define QUEUE_SIZE 50
+#define BUFFER_SIZE 10240 // 10 B buffer

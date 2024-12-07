@@ -1,6 +1,7 @@
 #ifndef SERVER_H
 #define SERVER_H
 
-void createServer();
+void createServer(int*);
+void serverResponseHandle(int*);
 
 #endif
