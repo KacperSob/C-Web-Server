@@ -1,7 +1,8 @@
 # C Web Server
 A simple web server written in C <br>
-Currenly supports only GET requests.
-Default webpage is index.html
+Currenly supports only GET requests. <br>
+Default webpage is index.html <br>
+Server port is specified in lib/common.h. will change that in the future.
 
 ## How to install
 Download git repo and use cmake and make to build.
