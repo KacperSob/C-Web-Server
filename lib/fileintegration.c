@@ -9,6 +9,8 @@ char *getContentType(const char* path){
 	if (strstr(path, ".js")) return "application/javascript";
 	if (strstr(path, ".jpg") || strstr(path, ".jpeg")) return "image/jpeg";
 	if (strstr(path, ".png")) return "image/png";
+    if (strstr(path, ".gif")) return "image/gif";
+    if (strstr(path, ".txt")) return "text/plain";
 	return "application/octet-stream"; // default 
 }
 

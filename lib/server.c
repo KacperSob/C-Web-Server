@@ -1,6 +1,7 @@
 #include "server.h"
 #include "common.h"
 #include "fileintegration.h"
+#include "posthandler.h"
 
 void createServer(int *serverFileDescryptor){
     struct sockaddr_in address; //Imports socket structure for IPv4
@@ -38,18 +39,37 @@ void serverResponseHandle(int *serverFileDescryptor){
 	recv(client_fd, buffer, 1024-1, 0);
 	printf("REQUEST RECEIVED: \n%s\n", buffer);
 
-	// SIMPLE SEND A RESPONSE
-	/*
-	char response[] = "HTTP/1.1 200 OK\r\nContent-Length: 13\r\nConnection: close\r\n\r\nHello, world!";
-	for (int sent = 0; sent < sizeof(response); sent += send(client_fd, response+sent, sizeof(response)-sent, 0));
-	*/
-	char filePath[BUFFER_SIZE] = "./";
-	sscanf(buffer, "GET /%s ", filePath + 2); // add "./"
+    if(strncmp(buffer, "POST", 4) == 0){
+        int contentLength = getContentLength(buffer);
 
-	sendFileResponse(client_fd, filePath);
+        char *bodyStart = strstr(buffer, "\r\n\r\n") + 4;
+        int bodyLength = sizeof(buffer)/sizeof(char) - (bodyStart - buffer);
+            
+        char body[BUFFER_SIZE] = {0};
+        strncpy(body, bodyStart, bodyLength);
+        if(bodyLength < contentLength){
+            read(client_fd, body + bodyLength, contentLength - bodyLength);
+        }
+        parseFormData(body);
 
-	printf("SENDING A RETURN\n");
+        const char* response = "HTTP/1.1 200 OK\r\n"
+                               "Content-Type: text/plain\r\n\r\n"
+                               "POST request processed successfully!";
+        send(client_fd, response, strlen(response), 0);
+    } else {
 
+        // SIMPLE SEND A RESPONSE
+        /*
+            char response[] = "HTTP/1.1 200 OK\r\nContent-Length: 13\r\nConnection: close\r\n\r\nHello, world!";
+            for (int sent = 0; sent < sizeof(response); sent += send(client_fd, response+sent, sizeof(response)-sent, 0));
+        */
+        char filePath[BUFFER_SIZE] = "./";
+        sscanf(buffer, "GET /%s ", filePath + 2); // add "./"
+
+        sendFileResponse(client_fd, filePath);
+
+        printf("SENDING A RETURN\n");
+    }
 	close(client_fd);
 	memset(buffer, 0, BUFFER_SIZE);
 }
