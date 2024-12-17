@@ -1,6 +1,6 @@
 # C Web Server
 A simple web server written in C <br>
-Currenly supports only GET requests. <br>
+Currenly fully supports only GET requests. <br>
 Default webpage is index.html <br>
 Server port is specified in lib/common.h. will change that in the future.
 
