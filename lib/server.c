@@ -26,7 +26,7 @@ void createServer(int *serverFileDescryptor){
 
 }
 
-void serverResponseHandle(int *serverFileDescryptor){
+void serverResponseHandle(int *serverFileDescryptor, char **lastReceived){
 	char buffer[BUFFER_SIZE] = { 0 };
 
 	int client_fd = accept(*serverFileDescryptor, 0, 0); // fd as in file descryptor
@@ -51,11 +51,20 @@ void serverResponseHandle(int *serverFileDescryptor){
             read(client_fd, body + bodyLength, contentLength - bodyLength);
         }
         parseFormData(body);
+        
+        if(strnlen(*lastReceived, 10) < 5){
+            //printf("RECV2\n %s", *lastReceived);
+            sendFileResponse(client_fd, "./index.html");
+        } else { 
+            //printf("RECV1\n");
+            char filePath[BUFFER_SIZE] = "./";
+            sscanf(*lastReceived, "GET /%s ", filePath + 2);
 
-        const char* response = "HTTP/1.1 200 OK\r\n"
-                               "Content-Type: text/plain\r\n\r\n"
-                               "POST request processed successfully!";
-        send(client_fd, response, strlen(response), 0);
+            sendFileResponse(client_fd, filePath);
+        }
+
+        printf("SENDING A RETURN\n");
+        
     } else {
 
         // SIMPLE SEND A RESPONSE
@@ -67,6 +76,8 @@ void serverResponseHandle(int *serverFileDescryptor){
         sscanf(buffer, "GET /%s ", filePath + 2); // add "./"
 
         sendFileResponse(client_fd, filePath);
+
+        *lastReceived = buffer;
 
         printf("SENDING A RETURN\n");
     }

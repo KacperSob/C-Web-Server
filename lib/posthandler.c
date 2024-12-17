@@ -19,7 +19,7 @@ void parseFormData(const char *body) {
         char *key = strtok(token, "=");
         char *value = strtok(NULL, "=");
         if(key && value){
-            printf(" %s: %s\n", key, value);
+            printf("%s: %s\n", key, value);
         }
         token = strtok(NULL, "&");
     }
